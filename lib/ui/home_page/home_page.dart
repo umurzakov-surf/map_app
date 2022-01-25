@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:map_app/model/map_place.dart';
+import 'package:map_app/service/model/map_place.dart';
 import 'package:map_app/ui/place_page/place_page.dart';
 
 final List<MapPlace> _places = [

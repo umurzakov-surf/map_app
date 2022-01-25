@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:map_app/model/map_place.dart';
+import 'package:map_app/service/model/map_place.dart';
 import 'package:map_app/ui/map_page/map_page.dart';
 
 class PlacePage extends StatelessWidget {
