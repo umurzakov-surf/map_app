@@ -7,9 +7,10 @@ class MapApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Map app',
-      home: HomePage(),
+      home: const HomePage(),
+      theme: ThemeData(fontFamily: 'Comfortaa'),
     );
   }
 }

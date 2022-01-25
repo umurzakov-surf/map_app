@@ -30,45 +30,40 @@ class PlacePage extends StatelessWidget {
               ),
             ),
           ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(place.description),
-                    TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push<void>(MaterialPageRoute(
-                          builder: (_) => MapPage(
-                            place: place,
-                          ),
-                        ));
-                      },
-                      icon: const Icon(
-                        Icons.moving,
-                        color: Colors.white,
-                      ),
-                      label: const Text(
-                        'Маршрут',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                      ),
-                    ),
-                  ],
+          SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              for (int i = 0; i <= 20; i++)
-                ListTile(
-                  title: Text('$i'),
+                Text(place.description),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push<void>(MaterialPageRoute(
+                      builder: (_) => MapPage(
+                        place: place,
+                      ),
+                    ));
+                  },
+                  icon: const Icon(
+                    Icons.moving,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Маршрут',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                  ),
                 ),
-            ]),
+                for (int i = 0; i <= 20; i++)
+                  ListTile(
+                    title: Text('$i'),
+                  ),
+              ]),
+            ),
           ),
         ],
       ),
