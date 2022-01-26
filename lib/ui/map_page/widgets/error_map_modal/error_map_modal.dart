@@ -17,7 +17,7 @@ class ErrorMapModal extends ElementaryWidget<ErrorMapModalWM> {
           const SizedBox(height: 20),
           const Text('Simulator > Features > Location > Custom Location'),
           const SizedBox(height: 20),
-          const Text('Add this coordinates:'),
+          const Text('Set this coordinates:'),
           const SizedBox(height: 10),
           const Text('51,1145\n71,4234'),
           const SizedBox(height: 20),
