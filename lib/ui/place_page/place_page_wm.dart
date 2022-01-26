@@ -1,5 +1,4 @@
 import 'package:elementary/elementary.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:map_app/service/model/map_place.dart';
 import 'package:map_app/service/navigation_helper.dart';

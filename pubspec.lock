@@ -227,7 +227,7 @@ packages:
     source: hosted
     version: "4.0.1"
   geolocator_web:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: geolocator_web
       url: "https://pub.dartlang.org"
@@ -360,7 +360,7 @@ packages:
     source: hosted
     version: "1.0.2"
   package_info_plus_web:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: package_info_plus_web
       url: "https://pub.dartlang.org"

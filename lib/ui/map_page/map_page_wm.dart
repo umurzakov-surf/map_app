@@ -2,26 +2,30 @@ import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_app/service/dialog_helper.dart';
 import 'package:map_app/service/map_service.dart';
 import 'package:map_app/service/polylines_points_helper.dart';
 import 'package:map_app/ui/map_page/map_page.dart';
 import 'package:map_app/ui/map_page/map_page_model.dart';
+import 'package:map_app/ui/map_page/widgets/error_map_modal/error_map_modal.dart';
 
 MapPageWM mapPageWMFactory(BuildContext _) =>
-    MapPageWM(MapPageModel(MapService(), PolylinesPointsHelper()));
+    MapPageWM(
+      MapPageModel(MapService(), PolylinesPointsHelper()), DialogHelper(),);
 
 class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
   final Set<Polyline> polylines = <Polyline>{};
   final Set<Marker> markers = <Marker>{};
-  final double zoom = 14;
   final List<LatLng> _polylineCoordinates = [];
   final String _googleAPiKey = 'AIzaSyA8DGaRfhhOPGNOdSPz-pCnZowUaugRJsg';
   final _polylinesState = EntityStateNotifier<Set<Polyline>>();
 
+  final DialogHelper _dialogHelper;
+
   ListenableState<EntityState<Set<Polyline>>> get polylinesState =>
       _polylinesState;
 
-  MapPageWM(MapPageModel model) : super(model);
+  MapPageWM(MapPageModel model, this._dialogHelper) : super(model);
 
   @override
   void initWidgetModel() {
@@ -30,10 +34,6 @@ class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
   }
 
   Future<void> onMapCreated(GoogleMapController _) async {
-    await getPolyline();
-  }
-
-  Future<void> getPolyline() async {
     _polylinesState.loading();
     final position = await model.getCurrentPosition();
 
@@ -50,11 +50,14 @@ class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
         PointLatLng(widget.place.latitude, widget.place.longitude),
       );
 
-      if (result.points.isNotEmpty) {
+      if (result.status == 'OK' && result.points.isNotEmpty) {
         for (final point in result.points) {
           _polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         }
+      } else {
+        await _showModal();
       }
+
       _addPolyLine();
       _polylinesState.content(polylines);
     }
@@ -79,5 +82,12 @@ class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
       icon: descriptor,
       position: position,
     ));
+  }
+
+  Future<void> _showModal() async {
+    await _dialogHelper.showCustomDialog<String>(
+      context: context,
+      builder: (context) => const ErrorMapModal(),
+    );
   }
 }

@@ -18,9 +18,9 @@ class MapPage extends ElementaryWidget<MapPageWM> {
         listenableEntityState: wm.polylinesState,
         builder: (_, polylines) {
           return GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: const LatLng(51.106437465167936, 71.42122559257321),
-              zoom: wm.zoom,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(51.106437465167936, 71.42122559257321),
+              zoom: 14,
             ),
             myLocationEnabled: true,
             onMapCreated: wm.onMapCreated,
