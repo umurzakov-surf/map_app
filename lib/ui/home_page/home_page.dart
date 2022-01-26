@@ -19,9 +19,7 @@ class HomePage extends ElementaryWidget<HomePageWM> {
             children: [
               for (final MapPlace place in places)
                 GestureDetector(
-                  onTap: () {
-                    wm.onMapPlaceClick(place);
-                  },
+                  onTap: () => wm.onMapPlaceClick(place),
                   child: ListTile(
                     leading: Hero(
                       tag: place.name,

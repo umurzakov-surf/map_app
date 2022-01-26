@@ -1,14 +1,16 @@
+import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:map_app/service/model/map_place.dart';
-import 'package:map_app/ui/map_page/map_page.dart';
+import 'package:map_app/ui/place_page/place_page_wm.dart';
 
-class PlacePage extends StatelessWidget {
+class PlacePage extends ElementaryWidget<PlacePageWM> {
   final MapPlace place;
 
-  const PlacePage({Key? key, required this.place}) : super(key: key);
+  const PlacePage({Key? key, required this.place})
+      : super(placePageWMFactory, key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(PlacePageWM wm) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -39,13 +41,7 @@ class PlacePage extends StatelessWidget {
                 ),
                 Text(place.description),
                 TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push<void>(MaterialPageRoute(
-                      builder: (_) => MapPage(
-                        place: place,
-                      ),
-                    ));
-                  },
+                  onPressed: () => wm.onRouteButtonClick(place),
                   icon: const Icon(
                     Icons.moving,
                     color: Colors.white,
