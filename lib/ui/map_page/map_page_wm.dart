@@ -7,12 +7,10 @@ import 'package:map_app/service/polylines_points_helper.dart';
 import 'package:map_app/ui/map_page/map_page.dart';
 import 'package:map_app/ui/map_page/map_page_model.dart';
 
-MapPageWM mapPageWMFactory(BuildContext _) {
-  return MapPageWM(MapPageModel(MapService(), PolylinesPointsHelper()));
-}
+MapPageWM mapPageWMFactory(BuildContext _) =>
+    MapPageWM(MapPageModel(MapService(), PolylinesPointsHelper()));
 
 class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
-
   final Set<Polyline> polylines = <Polyline>{};
   final Set<Marker> markers = <Marker>{};
   final double zoom = 14;
@@ -20,7 +18,8 @@ class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
   final String _googleAPiKey = 'AIzaSyA8DGaRfhhOPGNOdSPz-pCnZowUaugRJsg';
   final _polylinesState = EntityStateNotifier<Set<Polyline>>();
 
-  ListenableState<EntityState<Set<Polyline>>> get polylinesState => _polylinesState;
+  ListenableState<EntityState<Set<Polyline>>> get polylinesState =>
+      _polylinesState;
 
   MapPageWM(MapPageModel model) : super(model);
 

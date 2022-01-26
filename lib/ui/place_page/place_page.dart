@@ -31,7 +31,7 @@ class PlacePage extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(
@@ -58,9 +58,9 @@ class PlacePage extends StatelessWidget {
                     backgroundColor: Colors.blueAccent,
                   ),
                 ),
-                for (int i = 0; i <= 20; i++)
+                for (int someNum = 0; someNum <= 20; someNum++)
                   ListTile(
-                    title: Text('$i'),
+                    title: Text('$someNum'),
                   ),
               ]),
             ),
