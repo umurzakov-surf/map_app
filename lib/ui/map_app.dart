@@ -10,7 +10,14 @@ class MapApp extends StatelessWidget {
     return MaterialApp(
       title: 'Map app',
       home: const HomePage(),
-      theme: ThemeData(fontFamily: 'Comfortaa'),
+      theme: ThemeData(
+        fontFamily: 'Comfortaa',
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.blueAccent,
+          ),
+        ),
+      ),
     );
   }
 }

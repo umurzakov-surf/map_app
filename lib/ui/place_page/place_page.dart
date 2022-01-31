@@ -32,6 +32,7 @@ class PlacePage extends ElementaryWidget<PlacePageWM> {
               ),
             ),
           ),
+          const SliverToBoxAdapter(child: Text('test text'),),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             sliver: SliverList(

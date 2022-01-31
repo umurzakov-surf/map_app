@@ -1,87 +1,96 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:elementary/elementary.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_app/custom_exceptions/custom_exception.dart';
+import 'package:map_app/custom_exceptions/map_route_exception.dart';
 import 'package:map_app/service/dialog_helper.dart';
 import 'package:map_app/service/map_service.dart';
 import 'package:map_app/service/polylines_points_helper.dart';
 import 'package:map_app/ui/map_page/map_page.dart';
 import 'package:map_app/ui/map_page/map_page_model.dart';
-import 'package:map_app/ui/map_page/widgets/error_map_modal/error_map_modal.dart';
+import 'package:map_app/ui/map_page/widgets/error_map_modal.dart';
 
 MapPageWM mapPageWMFactory(BuildContext _) =>
     MapPageWM(
-      MapPageModel(MapService(), PolylinesPointsHelper()), DialogHelper(),);
+      MapPageModel(MapService(), PolylinesPointsHelper()),
+      DialogHelper(),
+    );
 
 class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
-  final Set<Polyline> polylines = <Polyline>{};
-  final Set<Marker> markers = <Marker>{};
-  final List<LatLng> _polylineCoordinates = [];
-  final String _googleAPiKey = 'AIzaSyA8DGaRfhhOPGNOdSPz-pCnZowUaugRJsg';
   final _polylinesState = EntityStateNotifier<Set<Polyline>>();
+  final Connectivity _connectivity = Connectivity();
+  final ValueNotifier<bool> _isIntenetConnected = ValueNotifier<bool>(true);
+  final ValueNotifier<bool> _tryAgainButtonVisible = ValueNotifier<bool>(false);
 
   final DialogHelper _dialogHelper;
 
+  Set<Marker> get markers => model.markers;
+  Set<Polyline> get polylines => model.polylines;
+
   ListenableState<EntityState<Set<Polyline>>> get polylinesState =>
       _polylinesState;
+
+  ValueListenable<bool> get isInternetConnected => _isIntenetConnected;
+  ValueListenable<bool> get tryAgainButtonVisible => _tryAgainButtonVisible;
+
+  late StreamSubscription<ConnectivityResult> _connectivityStreamSubscription;
 
   MapPageWM(MapPageModel model, this._dialogHelper) : super(model);
 
   @override
   void initWidgetModel() {
     super.initWidgetModel();
+    _initConnectivity();
+    _connectivityStreamSubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectivityStatus);
     _polylinesState.content(polylines);
   }
 
+  @override
+  void dispose() {
+    _connectivityStreamSubscription.cancel();
+    super.dispose();
+  }
+
   Future<void> onMapCreated(GoogleMapController _) async {
+    await generateRoute();
+  }
+
+  Future<void> generateRoute() async {
     _polylinesState.loading();
-    final position = await model.getCurrentPosition();
-
-    if (position != null) {
-      _addMarker(
-        LatLng(widget.place.latitude, widget.place.longitude),
-        'destination',
-        BitmapDescriptor.defaultMarkerWithHue(90),
-      );
-
-      final result = await model.getRouteBetweenCoordinates(
-        _googleAPiKey,
-        PointLatLng(position.latitude, position.longitude),
-        PointLatLng(widget.place.latitude, widget.place.longitude),
-      );
-
-      if (result.status == 'OK' && result.points.isNotEmpty) {
-        for (final point in result.points) {
-          _polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        }
-      } else {
+    if (_isIntenetConnected.value) {
+      try {
+        await model.generateRoute(
+          markLat: widget.place.latitude, markLong: widget.place.longitude,);
+      } on CustomException catch (e) {
+        _showSnack(e.cause);
+      } on MapRouteException catch (_) {
         await _showModal();
       }
-
-      _addPolyLine();
-      _polylinesState.content(polylines);
+      _tryAgainButtonVisible.value = polylines.isEmpty;
     }
+    _polylinesState.content(polylines);
   }
 
-  void _addPolyLine() {
-    const id = PolylineId('poly');
-    polylines.add(
-      Polyline(
-        polylineId: id,
-        color: Colors.blueAccent,
-        points: _polylineCoordinates,
-        width: 5,
-      ),
-    );
+  Future<void> _initConnectivity() async {
+    late ConnectivityResult _connectionResult;
+
+    try {
+      _connectionResult = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      _showSnack('${e.message}');
+    }
+
+    await _updateConnectivityStatus(_connectionResult);
   }
 
-  void _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
-    final markerId = MarkerId(id);
-    markers.add(Marker(
-      markerId: markerId,
-      icon: descriptor,
-      position: position,
-    ));
+  Future<void> _updateConnectivityStatus(ConnectivityResult result) async {
+    _isIntenetConnected.value = result != ConnectivityResult.none;
   }
 
   Future<void> _showModal() async {
@@ -89,5 +98,11 @@ class MapPageWM extends WidgetModel<MapPage, MapPageModel> {
       context: context,
       builder: (context) => const ErrorMapModal(),
     );
+    _polylinesState.content(polylines);
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }

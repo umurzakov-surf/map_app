@@ -23,8 +23,15 @@ class HomePage extends ElementaryWidget<HomePageWM> {
                   child: ListTile(
                     leading: Hero(
                       tag: place.name,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(place.img),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.all(Radius.circular(50)),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/placeholder-image.png',
+                          image: place.img,
+                          width: 45,
+                          height: 45,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     title: Text(place.name),

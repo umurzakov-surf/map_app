@@ -1,0 +1,1 @@
+class MapRouteException implements Exception {}
