@@ -15,7 +15,6 @@ class MapPageModel extends ElementaryModel {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
   final List<LatLng> _polylineCoordinates = [];
-  final String _googleAPiKey = 'AIzaSyA8DGaRfhhOPGNOdSPz-pCnZowUaugRJsg';
 
   Set<Marker> get markers => _markers;
   Set<Polyline> get polylines => _polylines;
